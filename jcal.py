@@ -18,11 +18,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import datetime
+
 HALAKIM_PER_HOUR = 1080
 HALAKIM_PER_DAY = 25920
 HALAKIM_PER_LUNAR_CYCLE = 29 * HALAKIM_PER_DAY + 13753
 HALAKIM_PER_METONIC_CYCLE = HALAKIM_PER_LUNAR_CYCLE * (12 * 19 + 7)
 
+_GREGORIAN_SDN_OFFSET  = 1721425
 _JEWISH_SDN_OFFSET = 347997
 _NEW_MOON_OF_CREATION = 31524
 
@@ -219,6 +222,10 @@ class JewishDate(object):
         month = KISLEV
         return get_result()
 
+    @classmethod
+    def from_date(cls, date):
+        return cls.from_sdn(date.toordinal() + _GREGORIAN_SDN_OFFSET)
+
     def to_sdn(self):
         """Convert a JewishDate to serial day number (SDN).
 
@@ -272,6 +279,9 @@ class JewishDate(object):
             except KeyError:
                 raise self._invalid_date_error()
         return sdn + _JEWISH_SDN_OFFSET
+
+    def to_date(self):
+        return datetime.date.fromordinal(self.to_sdn() - _GREGORIAN_SDN_OFFSET)
 
     def english_month_name(self):
         names = ('Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar I',
