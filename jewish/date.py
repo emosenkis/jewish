@@ -35,20 +35,6 @@ _TUESDAY = 2
 _WEDNESDAY = 3
 _FRIDAY = 5
 
-TISHREI = 1
-CHESHVAN = 2
-KISLEV = 3
-TEVET = 4
-SHEVAT = 5
-ADAR_I = 6
-ADAR_II = 7
-NISAN = 8
-IYAR = 9
-SIVAN = 10
-TAMUZ = 11
-AV = 12
-ELUL = 13
-
 _NOON = 18 * HALAKIM_PER_HOUR
 _AM3_11_20 = 9 * HALAKIM_PER_HOUR + 204
 _AM9_32_43 = 15 * HALAKIM_PER_HOUR + 589
@@ -57,7 +43,10 @@ LEAP_YEARS = set((2, 5, 7, 10, 13, 16, 18))
 _YEAR_OFFSET = (0, 12, 24, 37, 49, 61, 74, 86, 99, 111, 123, 136, 148, 160,
                 173, 185, 197, 210, 222)
 
-class InvalidDateError(Exception):
+class JewishDateError(Exception):
+    """Parent for all exceptions defined in jewish.date."""
+
+class InvalidDateError(JewishDateError):
     """Error arising from attempting to calculate based on an invalid date."""
 
 def months_in_metonic_year(year):
@@ -103,6 +92,20 @@ class _Molad(object):
 
 class JewishDate(object):
     """A date in the Jewish calendar."""
+
+    TISHREI = 1
+    CHESHVAN = 2
+    KISLEV = 3
+    TEVET = 4
+    SHEVAT = 5
+    ADAR_I = 6
+    ADAR_II = 7
+    NISAN = 8
+    IYAR = 9
+    SIVAN = 10
+    TAMUZ = 11
+    AV = 12
+    ELUL = 13
 
     def __init__(self, year, month, day):
         """Create a JewishDate.
@@ -157,10 +160,10 @@ class JewishDate(object):
             year = metonicCycle * 19 + metonicYear + 1
             if inputDay < tishrei1 + 59:
                 if inputDay < tishrei1 + 30:
-                    month = TISHREI
+                    month = cls.TISHREI
                     day = inputDay - tishrei1 + 1
                 else:
-                    month = CHESHVAN
+                    month = cls.CHESHVAN
                     day = inputDay - tishrei1 - 29
                 return get_result()
             else:
@@ -175,12 +178,12 @@ class JewishDate(object):
             if inputDay >= nextTishrei1 - 177:
                 # It is one of the last 6 months of the year
                 for month, offset in (
-                        (ELUL, 30),
-                        (AV, 60),
-                        (TAMUZ, 89),
-                        (SIVAN, 119),
-                        (IYAR, 148),
-                        (NISAN, 178)):
+                        (cls.ELUL, 30),
+                        (cls.AV, 60),
+                        (cls.TAMUZ, 89),
+                        (cls.SIVAN, 119),
+                        (cls.IYAR, 148),
+                        (cls.NISAN, 178)):
                     if inputDay > nextTishrei1 - offset:
                         day = inputDay - nextTishrei1 + offset
                         break
@@ -188,20 +191,20 @@ class JewishDate(object):
             else:
                 day = inputDay - nextTishrei1 + 207
                 if day > 0:
-                    month = ADAR_II
+                    month = cls.ADAR_II
                     return get_result()
                 if is_leap_year(year):
                     day += 30
                     if day > 0:
-                        month = ADAR_I
+                        month = cls.ADAR_I
                         return get_result()
                 day += 30
                 if day > 0:
-                    month = SHEVAT
+                    month = cls.SHEVAT
                     return get_result()
                 day += 29
                 if day > 0:
-                    month = TEVET
+                    month = cls.TEVET
                     return get_result()
 
                 # We need the length of the year to figure this out, so find
@@ -214,12 +217,12 @@ class JewishDate(object):
         day = inputDay - tishrei1 - 29
         cheshvanLength = 30 if yearLength in (355, 385) else 29
         if day <= cheshvanLength:
-            month = CHESHVAN
+            month = cls.CHESHVAN
             return get_result()
         else:
             day -= cheshvanLength
         # There's only one option left
-        month = KISLEV
+        month = cls.KISLEV
         return get_result()
 
     @classmethod
@@ -251,24 +254,24 @@ class JewishDate(object):
         yearLength = nextTishrei1 - tishrei1
         adarsLength = 59 if self.isLeapYear else 29
         offset = {
-            TISHREI: -1,
-            CHESHVAN: 29,
+            self.TISHREI: -1,
+            self.CHESHVAN: 29,
             # Kislev is variable
-            TEVET: adarsLength + 237,
-            SHEVAT: adarsLength + 208,
-            ADAR_I: adarsLength + 178,
-            ADAR_II: 207,
-            NISAN: 178,
-            IYAR: 148,
-            SIVAN: 119,
-            TAMUZ: 89,
-            AV: 60,
-            ELUL: 30,
+            self.TEVET: adarsLength + 237,
+            self.SHEVAT: adarsLength + 208,
+            self.ADAR_I: adarsLength + 178,
+            self.ADAR_II: 207,
+            self.NISAN: 178,
+            self.IYAR: 148,
+            self.SIVAN: 119,
+            self.TAMUZ: 89,
+            self.AV: 60,
+            self.ELUL: 30,
         }
 
-        if month in (TISHREI, CHESHVAN):
+        if month in (self.TISHREI, self.CHESHVAN):
             sdn = tishrei1 + day + offset[month]
-        elif month == KISLEV:
+        elif month == self.KISLEV:
             if yearLength in (355, 385):
                 sdn = tishrei1 + day + 59
             else:
@@ -286,7 +289,7 @@ class JewishDate(object):
     def english_month_name(self):
         names = ('Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar I',
                  'Adar II', 'Nisan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Elul')
-        if self.month == ADAR_II and not self.isLeapYear:
+        if self.month == self.ADAR_II and not self.isLeapYear:
             return 'Adar II'
         else:
             return names[self.month - 1]
