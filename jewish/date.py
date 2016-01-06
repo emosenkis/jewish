@@ -312,6 +312,16 @@ class JewishDate(object):
         return '%s(%s, %s, %s)' % (type(self).__name__,
                                    self.year, self.month, self.day)
 
+    def __format__(self, format_string):
+        """
+        Options:
+            default - str(self)
+            h - return date in hebrew.
+        """
+        if format_string == "h":
+            return '%s %s %s' % (self.day, self.hebrew_month_name(), self.year)
+        return str(self)
+
 
 def _get_first_day_of_year(metonicCycleYear, molad):
     """Calculate which day a year starts on.
