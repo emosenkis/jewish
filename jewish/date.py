@@ -294,6 +294,14 @@ class JewishDate(object):
         else:
             return names[self.month - 1]
 
+    def hebrew_month_name(self):
+        names = ('תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר א\'',
+                 'אדר ב\'', 'ניסן', 'אייר', 'סיוון', 'תמוז', 'אב', 'אלול')
+        if self.month == self.ADAR_II and not self.isLeapYear:
+            return 'אדר'
+        else:
+            return names[self.month - 1]
+
     def _invalid_date_error(self):
         return InvalidDateError('%r represents an invalid date' % self)
 
