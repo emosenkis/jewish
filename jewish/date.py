@@ -33,11 +33,13 @@ _SUNDAY = 0
 _MONDAY = 1
 _TUESDAY = 2
 _WEDNESDAY = 3
+_THURSDAY = 4
 _FRIDAY = 5
+_SATURDAY = 6
 
 _NOON = 18 * HALAKIM_PER_HOUR
-_AM3_11_20 = 9 * HALAKIM_PER_HOUR + 204
-_AM9_32_43 = 15 * HALAKIM_PER_HOUR + 589
+_AM3_11_20 = 9 * HALAKIM_PER_HOUR + 204 #Dehiyyot 3 - ג"ט ר"ד
+_AM9_32_43 = 15 * HALAKIM_PER_HOUR + 589 #Dehiyot 4 - בט"ו תקפ"ט
 
 LEAP_YEARS = set((2, 5, 7, 10, 13, 16, 18))
 _YEAR_OFFSET = (0, 12, 24, 37, 49, 61, 74, 86, 99, 111, 123, 136, 148, 160,
@@ -312,15 +314,19 @@ class JewishDate(object):
         return '%s(%s, %s, %s)' % (type(self).__name__,
                                    self.year, self.month, self.day)
 
-    def __format__(self, format_string):
+    def __format__(self, format_code):
         """
         Options:
             default - str(self)
             h - return date in hebrew.
         """
-        if format_string == "h":
-            return '%s %s %s' % (self.day, self.hebrew_month_name(), self.year)
-        return str(self)
+        _formats = {
+                    'e' : '{d.day} {d.english_month_name} {d.year}'
+                    'h' : '{d.day} {d.hebrew_month_name} {d.year}'
+        if format_code == '':
+            format_code = 'e'
+        fms = _formats[format_code]
+        return fms.format(d=self)
 
 
 def _get_first_day_of_year(metonicCycleYear, molad):
