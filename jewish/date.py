@@ -317,8 +317,9 @@ class JewishDate(object):
     def __format__(self, format_code):
         """
         Options:
-            default - str(self)
+            default - e
             h - return date in hebrew.
+            e - return date in english
         """
         _formats = {
                     'e' : '{d.day} {d.english_month_name} {d.year}'
