@@ -288,6 +288,7 @@ class JewishDate(object):
     def to_date(self):
         return datetime.date.fromordinal(self.to_sdn() - _GREGORIAN_SDN_OFFSET)
 
+    @property
     def english_month_name(self):
         names = ('Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar I',
                  'Adar II', 'Nisan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Elul')
