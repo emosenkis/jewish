@@ -296,6 +296,7 @@ class JewishDate(object):
         else:
             return names[self.month - 1]
 
+    @property
     def hebrew_month_name(self):
         names = ('תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר א\'',
                  'אדר ב\'', 'ניסן', 'אייר', 'סיוון', 'תמוז', 'אב', 'אלול')
@@ -322,8 +323,8 @@ class JewishDate(object):
             e - return date in english
         """
         _formats = {
-                    'e' : '{d.day} {d.english_month_name} {d.year}'
-                    'h' : '{d.day} {d.hebrew_month_name} {d.year}'
+                    'e' : '{d.day} {d.english_month_name} {d.year}' ,
+                    'h' : '{d.day} {d.hebrew_month_name} {d.year}' }
         if format_code == '':
             format_code = 'e'
         fms = _formats[format_code]
