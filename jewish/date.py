@@ -13,16 +13,16 @@ the above copyright and this permission statement are retained in all
 copies. THERE IS NO WARRANTY - USE AT YOUR OWN RISK.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+
+
+
+
 
 import datetime
 
 HALAKIM_PER_HOUR = 1080
-HALAKIM_PER_DAY = 25920
-HALAKIM_PER_LUNAR_CYCLE = 29 * HALAKIM_PER_DAY + 13753
+HALAKIM_PER_DAY = 24 * 1080
+HALAKIM_PER_LUNAR_CYCLE = 29 * HALAKIM_PER_DAY + 12 * HALAKIM_PER_HOUR + 793
 HALAKIM_PER_METONIC_CYCLE = HALAKIM_PER_LUNAR_CYCLE * (12 * 19 + 7)
 
 _GREGORIAN_SDN_OFFSET  = 1721425
@@ -33,11 +33,13 @@ _SUNDAY = 0
 _MONDAY = 1
 _TUESDAY = 2
 _WEDNESDAY = 3
+_THURSDAY = 4
 _FRIDAY = 5
+_SATURDAY = 6
 
 _NOON = 18 * HALAKIM_PER_HOUR
-_AM3_11_20 = 9 * HALAKIM_PER_HOUR + 204
-_AM9_32_43 = 15 * HALAKIM_PER_HOUR + 589
+_AM3_11_20 = 9 * HALAKIM_PER_HOUR + 204 #Dehiyyot 3 - ג"ט ר"ד
+_AM9_32_43 = 15 * HALAKIM_PER_HOUR + 589 #Dehiyot 4 - בט"ו תקפ"ט
 
 LEAP_YEARS = set((2, 5, 7, 10, 13, 16, 18))
 _YEAR_OFFSET = (0, 12, 24, 37, 49, 61, 74, 86, 99, 111, 123, 136, 148, 160,
@@ -286,11 +288,21 @@ class JewishDate(object):
     def to_date(self):
         return datetime.date.fromordinal(self.to_sdn() - _GREGORIAN_SDN_OFFSET)
 
+    @property
     def english_month_name(self):
         names = ('Tishrei', 'Cheshvan', 'Kislev', 'Tevet', 'Shevat', 'Adar I',
                  'Adar II', 'Nisan', 'Iyar', 'Sivan', 'Tamuz', 'Av', 'Elul')
         if self.month == self.ADAR_II and not self.isLeapYear:
             return 'Adar II'
+        else:
+            return names[self.month - 1]
+
+    @property
+    def hebrew_month_name(self):
+        names = ('תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר א\'',
+                 'אדר ב\'', 'ניסן', 'אייר', 'סיוון', 'תמוז', 'אב', 'אלול')
+        if self.month == self.ADAR_II and not self.isLeapYear:
+            return 'אדר'
         else:
             return names[self.month - 1]
 
@@ -303,6 +315,21 @@ class JewishDate(object):
     def __repr__(self):
         return '%s(%s, %s, %s)' % (type(self).__name__,
                                    self.year, self.month, self.day)
+
+    def __format__(self, format_code):
+        """
+        Options:
+            default - e
+            h - return date in hebrew.
+            e - return date in english
+        """
+        _formats = {
+                    'e' : '{d.day} {d.english_month_name} {d.year}' ,
+                    'h' : '{d.day} {d.hebrew_month_name} {d.year}' }
+        if format_code == '':
+            format_code = 'e'
+        fms = _formats[format_code]
+        return fms.format(d=self)
 
 
 def _get_first_day_of_year(metonicCycleYear, molad):
