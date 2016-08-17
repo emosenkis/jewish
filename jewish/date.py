@@ -4,7 +4,7 @@ Copyright 2014, Eitan Mosenkis, all rights reserved.
 Released under the MIT license which can be found at
 http://opensource.org/licenses/MIT.
 
-Based on jewish.c from the PHP stndard library, which includes the following
+Based on jewish.c from the PHP standard library, which includes the following
 statement:
 
 Copyright 1993-1995, Scott E. Lee, all rights reserved.
