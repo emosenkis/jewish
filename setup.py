@@ -16,6 +16,7 @@ setup(
         'Natural Language :: English',
         'Natural Language :: Hebrew',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Topic :: Religion',
         'Topic :: Scientific/Engineering :: Astronomy',
         'Topic :: Utilities',
